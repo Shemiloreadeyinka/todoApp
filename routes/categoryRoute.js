@@ -1,4 +1,4 @@
-const {addCategory,getCategory,getAllCategories,deleteCategory,updateCategory}= require("../controllers/userController")
+const {addCategory,getCategory,getAllCategories,deleteCategory,updateCategory}= require("../controllers/categoryController")
 const express= require("express")
 const authentication= require("../middlewares/authMiddleware")
 const authorization= require("../middlewares/adminMiddleware")

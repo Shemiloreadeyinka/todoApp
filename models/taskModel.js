@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const taskSchema=new mongoose.Schema({
-    user:{type:mongoose.Schema.Types.ObjectId,ref: "user" },
+    user:{type:mongoose.Schema.Types.ObjectId,ref: "User" },
     name : { type: String, required: true },
     description : { type: String},
     category:{type: mongoose.Schema.Types.ObjectId, ref:'Category'},

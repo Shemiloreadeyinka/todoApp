@@ -38,7 +38,7 @@ exports.getTaskById = async (req, res) => {
     const{id}=req.params
   try {
     const task = await Task.findById(id)
-      .populate('user', 'name email')
+      .populate('user', 'username email')
       .populate('category', 'name');
 
     if (!task) return res.status(404).json({ message: 'Task not found' });

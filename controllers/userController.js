@@ -4,14 +4,14 @@ const jwt = require('jsonwebtoken')
 
 
 exports.register = async (req, res) => {
-    const { name, email, phoneNo, password } = req.body
+    const { username, email, phoneNo, password } = req.body
     try {
-        if (!name || !email || !password || phoneNo) return res.status(400).json({ message: 'please fill in credentials' })
+        if (!username || !email || !password || !phoneNo) return res.status(400).json({ message: 'please fill in credentials' })
         let user = await User.findOne({ email })
         if (user) return res.status(400).json({ message: 'user already exists' })
         const hashedpassword = await bcrypt.hash(password, 10)
-        user = ({
-            name, email, phoneNo, password: hashedpassword
+        user =  new User ({
+            username, email, phoneNo, password: hashedpassword
         })
         await user.save()
         return res.status(200).json({ message: 'user registered successfully', user })
@@ -30,9 +30,10 @@ exports.login = async (req, res) => {
         const user = await User.findOne({ email })
         if (!user) return res.status(400).json({ message: "user doesn't exist" })
         const isMatch = await bcrypt.compare(password, user.password)
-        if (!isMatch) return res.json(400).json({ message: "invalid credentials" })
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' })
-        req.cookie("token", token, { httpOnly: true })
+            if (!isMatch) return res.status(400).json({ message: "invalid credentials" })
+
+        const token = jwt.sign({ id: user._id , isAdmin: user.isAdmin}, process.env.JWT_SECRET, { expiresIn: '1h' })
+        res.cookie("token", token, { httpOnly: true })
         return res.status(200).json({ message: 'login successful' })
     } catch (error) {
         return res.status(500).json({ error: error.message })
@@ -43,7 +44,7 @@ exports.login = async (req, res) => {
 exports.getoneUser = async (req, res) => {
     const {id } = req.params
     try {
-        const user = User.findById(id).populate('posts')
+        const user =await  User.findById(id)
         if (!user) return res.status(400).json({ message: "User doesn't exist" })
         return res.status(200).json({ message: "user retrieved successfully", user })
     } catch (error) {
@@ -53,7 +54,7 @@ exports.getoneUser = async (req, res) => {
 }
 exports.getallUsers = async (req, res) => {
     try {
-        const users = await User.find().populate('posts')
+        const users = await User.find()
 
         return res.status(200).json({ message: 'successful', users })
     } catch (error) {
