@@ -76,3 +76,28 @@ exports.deleteUser = async (req, res) => {
         return res.status(500).json({ error: error.message });
     }
 };
+
+exports.logout = (req, res) => {
+    res.clearCookie("token");
+    return res.status(200).json({ message: "Logged out successfully" });
+}
+
+exports.updateUser = async (req, res) => {
+    const { id } = req.params;
+    const { username, email, phoneNo, password } = req.body;
+
+    try {
+        const user = await User.findById(id);
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        user.username = username || user.username;
+        user.email = email || user.email;
+        user.phoneNo = phoneNo || user.phoneNo;
+        if (password) user.password = await bcrypt.hash(password, 10);
+
+        await user.save();
+        return res.status(200).json({ message: "User updated successfully", user });
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+};

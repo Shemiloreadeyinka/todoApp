@@ -1,12 +1,11 @@
 const {addCategory,getCategory,getAllCategories,deleteCategory,updateCategory}= require("../controllers/categoryController")
 const express= require("express")
 const authentication= require("../middlewares/authMiddleware")
-const authorization= require("../middlewares/adminMiddleware")
 const route=express.Router()
 
-route.post('/',authentication,authorization,addCategory);
-route.get('/:id',authentication,getCategory);
+route.post('/',authentication,addCategory);
 route.get('/',authentication,getAllCategories);
-route.delete('/:id',authentication,authorization,deleteCategory);
-route.put('/:name',authentication,authorization,updateCategory);
+route.get('/:id',authentication,getCategory);
+route.delete('/:id',authentication,deleteCategory);
+route.patch('/:id',authentication,updateCategory);
 module.exports= route
